@@ -733,7 +733,7 @@ prompt_and_wait() {
 		    erase_volume("/system");
 		    erase_volume("/data");
 		    erase_volume("/cache");
-		    ui_print("\nFull wipe complete!");
+		    ui_print("\nFull wipe complete!\n");
 		    if (!ui_text_visible()) return;
 		}
 		break;
