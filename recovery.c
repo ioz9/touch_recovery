@@ -501,7 +501,7 @@ get_menu_selection(char** headers, char** items, int menu_only,
 
         if (abs(selected - old_selected) > 1) {
             wrap_count++;
-            if (wrap_count == 3) {
+            if (wrap_count == 300) {
                 wrap_count = 0;
                 if (ui_get_showing_back_button()) {
                     ui_print("Back menu button disabled.\n");
@@ -725,6 +725,18 @@ prompt_and_wait() {
                     if (!ui_text_visible()) return;
                 }
                 break;
+
+	    case ITEM_WIPE_ALL:
+		if (confirm_selection("Confirm wipe all?", "Yes - Wipe All"))
+		{
+		    ui_print("\n-- Wiping system/data/cache...\n");
+		    erase_volume("/system");
+		    erase_volume("/data");
+		    erase_volume("/cache");
+		    ui_print("\nFull wipe complete!");
+		    if (!ui_text_visible()) return;
+		}
+		break;
 
             case ITEM_APPLY_SDCARD:
                 if (confirm_selection("Confirm install?", "Yes - Install /sdcard/update.zip"))

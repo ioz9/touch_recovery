@@ -643,3 +643,4 @@ void ui_set_showing_back_button(int showBackButton) {
 int ui_get_showing_back_button() {
     return gShowBackButton;
 }
+
