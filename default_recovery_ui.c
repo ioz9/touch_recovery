@@ -20,23 +20,6 @@
 #include "common.h"
 #include "extendedcommands.h"
 
-// Onscreen debug code (enabled = 1, disabled = 2)
-int TOUCH_CTRL_DEBUG = 0;
-// Touchscreen hack start : MENU_SELECT icon has maximum possible height.
-#define MENU_MAX_HEIGHT 80 // Max allowed height for navigation icons
-
-/* Device Specific boundaries for touch recognition
- * 
- * WARNING!!!
- * these might not be the same as resX, resY (from below)
- * these have to be found by setting them to zero and then in debug mode
- * check the values returned by the on screen touch output by click on the
- * touch panel extremeties
- */
-int maxX=320, maxY=480; // Set to 0 for debugging
-int resX=320, resY=480; // Values can be obtained from functoins 'gr_fb_width() and gr_fb_height()
-// Touchscreen hack end.
-
 char* MENU_HEADERS[] = { NULL };
 
 char* MENU_ITEMS[] = { "reboot system now",
@@ -119,42 +102,3 @@ int device_perform_action(int which) {
 int device_wipe_data() {
     return 0;
 }
-
-// Touchscreen hack start
-int get_menu_icon_info(int indx1, int indx2) {
-	// ToDo: Following switch case should be replaced by array or structure
-     int caseN = inx1*4 +indx2;
-     switch (caseN) {
-		case 0: return 1*resX/8;
-		case 1: return (resY - MENU_MAX_HEIGHT/2);
-		case 2: return 0*resX/4;
-		case 3: return 1*resX/4;
-		case 4: return 3*resX/8;
-		case 5: return (resY - MENU_MAX_HEIGHT/2);
-		case 6: return 1*resX/4;
-		case 7: return 2*resX/4;
-		case 8: return 5*resX/8;
-		case 9: return (resY - MENU_MAX_HEIGHT/2);
-		case 10: return 2*resX/4;
-		case 11: return 3*resX/4;
-		case 12: return 7*resX/8;
-		case 13: return (resY - MENU_MAX_HEIGHT/2);
-		case 14: return 3*resX/4;
-		case 15: return 4*resX/4;
-	}
-	return 0;
-}
-
-// For those devices which have skewed X and Y axis detection limits (not similar to XY resolution of device: need normalization.
-int MT_X(int x) {
-	int out;
-	out = maxX ? (x*gr_fb_width()/maxX) : x;
-	return out;
-}
-
-int MT_Y(int y) {
-	int out;
-	out = maxY ? (y*gr_fb_height()/maxY) : y;
-	return out;
-}
-// Touchscreen hack end.
