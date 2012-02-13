@@ -45,6 +45,9 @@
 #include "extendedcommands.h"
 #include "flashutils/flashutils.h"
 
+#define ABS_MT_POSITION_X 0x35  /* Center X ellipse position */
+#define ABS_MT_POSITION_Y 0x36  /* Center Y ellipse position */
+
 static const struct option OPTIONS[] = {
   { "send_intent", required_argument, NULL, 's' },
   { "update_package", required_argument, NULL, 'u' },
@@ -464,10 +467,16 @@ get_menu_selection(char** headers, char** items, int menu_only,
     int wrap_count = 0;
 
     while (chosen_item < 0 && chosen_item != GO_BACK) {
-        int key = ui_wait_key();
+		struct keyStruct *key;
+		key = ui_wait_key();
+
         int visible = ui_text_visible();
 
-        int action = device_handle_key(key, visible);
+		int action;
+		if(key->code == ABS_MT_POSITION_X)
+	        action = device_handle_mouse(key, visible);
+		else
+	        action = device_handle_key(key->code, visible);
 
         int old_selected = selected;
 
@@ -729,12 +738,12 @@ prompt_and_wait() {
 	    case ITEM_WIPE_ALL:
 		if (confirm_selection("Confirm wipe all?", "Yes - Wipe All"))
 		{
-		    ui_print("\n-- Wiping system/data/cache...\n");
-		    erase_volume("/system");
-		    erase_volume("/data");
-		    erase_volume("/cache");
-		    ui_print("\nFull wipe complete!\n");
-		    if (!ui_text_visible()) return;
+			ui_print("\n-- Wiping system, data, cache...\n");
+			erase_volume("/system");
+			erase_volume("/data");
+			erase_volume("/cache");
+			ui_print("\nFull wipe complete!\n");
+			if (!ui_text_visible()) return;
 		}
 		break;
 
@@ -824,7 +833,7 @@ main(int argc, char **argv) {
     printf("Starting recovery on %s", ctime(&start));
 
     ui_init();
-    ui_print(EXPAND(RECOVERY_VERSION)"\n");
+    //ui_print(EXPAND(RECOVERY_VERSION)"\n");
     load_volume_table();
     process_volumes();
     LOGI("Processing arguments.\n");
