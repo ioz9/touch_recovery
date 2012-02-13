@@ -339,25 +339,26 @@ static int vk_modify(struct ev *e, struct input_event *ev)
     return 1;
 }
 
-int ev_get(struct input_event *ev, unsigned wait_time)
+int ev_get(struct input_event *ev, unsigned dont_wait)
 {
     int r;
     unsigned n;
 
     do {
-        r = poll(ev_fds, ev_count, wait_time);
+        r = poll(ev_fds, ev_count, dont_wait ? 0 : -1);
 
         if(r > 0) {
             for(n = 0; n < ev_count; n++) {
                 if(ev_fds[n].revents & POLLIN) {
                     r = read(ev_fds[n].fd, ev, sizeof(*ev));
                     if(r == sizeof(*ev)) {
-                    	return 0;
+                        if (!vk_modify(&evs[n], ev))
+                            return 0;
                     }
                 }
             }
         }
-    } while(wait_time == -1);
+    } while(dont_wait == 0);
 
     return -1;
 }
