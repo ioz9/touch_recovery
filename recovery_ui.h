@@ -89,6 +89,7 @@ extern char* MENU_ITEMS[];
 #define MENU_ICON_XR		3
 
 extern int TOUCH_CONTROL_DEBUG;
+extern int TOUCH_NOSHOW_LOG;
 
 extern int maxX;
 extern int maxY;
