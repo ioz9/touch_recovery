@@ -43,6 +43,8 @@
 #include "mtdutils/mtdutils.h"
 #include "bmlutils/bmlutils.h"
 
+// Touchscreen hack
+#define ABS_MT_POSITION_X 0x35 // Center X ellipse position
 
 int signature_check_enabled = 1;
 int script_assert_enabled = 1;
@@ -948,13 +950,19 @@ void show_advanced_menu()
             {
                 ui_print("Outputting key codes.\n");
                 ui_print("Go back to end debugging.\n");
-                int key;
+                // Touchscreen hack start
+                struct keyStruct{ int code, x, y; }*key;
                 int action;
-                do
-                {
+                do {
                     key = ui_wait_key();
-                    action = device_handle_key(key, 1);
-                    ui_print("Key: %d\n", key);
+                    if(key->code == ABS_MT_POSITION_X) {
+					action = device_handle_mouse(key, 1);
+					ui_print("Touch: X: %d\tY: %d\n", key->x, key->y);
+				} else {
+					action = device_handle_key(key->code, 1);
+					ui_print("Key, %x\n", key->code);
+				}
+			 // Touchscreen hack end
                 }
                 while (action != GO_BACK);
                 break;
