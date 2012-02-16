@@ -895,6 +895,7 @@ void show_advanced_menu()
     static char* list[] = { "Reboot Recovery",
                             "Wipe Dalvik Cache",
                             "Report Error",
+			    "On-screen log switch",
                             "Key Test",
                             "Show log",
 #ifndef BOARD_HAS_SMALL_RECOVERY
@@ -937,7 +938,27 @@ void show_advanced_menu()
             case 2:
                 handle_failure(1);
                 break;
-            case 3:
+	    case 3:
+	    {
+	    	/*
+	    	 * ON-SCREEN LOG SWITCH HANDLER
+	    	 *
+	    	 * There's probably a better way of handling this
+	    	 * but it works for now.
+	    	 */
+		if(TOUCH_NOSHOW_LOG)
+		{
+			// if switch is on, turn it off
+			int TOUCH_NOSHOW_LOG = 0;
+			ui_print("\nOn-screen log enabled.\n");
+		} else {
+			// if switch is off, turn it on
+			ui_print("\nOn-screen log disabled.\n");
+			int TOUCH_NOSHOW_LOG = 1;
+		}
+		break;
+	    }
+            case 4:
             {
                 ui_print("Outputting key codes.\n");
                 ui_print("Go back to end debugging.\n");
@@ -964,12 +985,12 @@ void show_advanced_menu()
                 while (action != GO_BACK);
                 break;
             }
-            case 4:
+            case 5:
             {
                 ui_printlogtail(12);
                 break;
             }
-            case 5:
+            case 6:
             {
                 static char* ext_sizes[] = { "128M",
                                              "256M",
@@ -1012,7 +1033,7 @@ void show_advanced_menu()
                     ui_print("An error occured while partitioning your SD Card. Please see /tmp/recovery.log for more details.\n");
                 break;
             }
-            case 6:
+            case 7:
             {
                 ensure_path_mounted("/system");
                 ensure_path_mounted("/data");
@@ -1021,7 +1042,7 @@ void show_advanced_menu()
                 ui_print("Done!\n");
                 break;
             }
-            case 7:
+            case 8:
             {
                 static char* ext_sizes[] = { "128M",
                                              "256M",
