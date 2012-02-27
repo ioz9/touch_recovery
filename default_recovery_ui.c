@@ -27,7 +27,8 @@
 int TOUCH_CONTROL_DEBUG = 0;
 
 /*
-	this just sets the default; it's user-set once actually booted to recovery mode
+	to enable on-sccreen log printing set this to 0
+	to disable on-screen log printing set this to 1
 */
 int TOUCH_NOSHOW_LOG = 1;
 
