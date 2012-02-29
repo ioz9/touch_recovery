@@ -8,7 +8,6 @@ commands_recovery_local_path := $(LOCAL_PATH)
 # LOCAL_CPP_EXTENSION := .c
 
 LOCAL_SRC_FILES := \
-    legacy.c \
     recovery.c \
     bootloader.c \
     install.c \
@@ -80,7 +79,6 @@ endif
 
 LOCAL_STATIC_LIBRARIES += libminui libpixelflinger_static libpng libcutils
 LOCAL_STATIC_LIBRARIES += libstdc++ libc
-LOCAL_STATIC_LIBRARIES += libamend
 
 LOCAL_C_INCLUDES += system/extras/ext4_utils
 
@@ -147,8 +145,8 @@ LOCAL_STATIC_LIBRARIES := libmincrypt libcutils libstdc++ libc
 
 include $(BUILD_EXECUTABLE)
 
-include $(commands_recovery_local_path)/amend/Android.mk
 include $(commands_recovery_local_path)/dedupe/Android.mk
+
 include $(commands_recovery_local_path)/bmlutils/Android.mk
 include $(commands_recovery_local_path)/flashutils/Android.mk
 include $(commands_recovery_local_path)/libcrecovery/Android.mk
