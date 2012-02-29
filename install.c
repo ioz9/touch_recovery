@@ -32,8 +32,8 @@
 #include "mtdutils/mtdutils.h"
 #include "roots.h"
 #include "verifier.h"
-
 #include "firmware.h"
+#include "legacy.h"
 
 #include "extendedcommands.h"
 
@@ -109,17 +109,6 @@ try_update_binary(const char *path, ZipArchive *zip) {
     const ZipEntry* binary_entry =
             mzFindZipEntry(zip, ASSUMED_UPDATE_BINARY_NAME);
     if (binary_entry == NULL) {
-        const ZipEntry* update_script_entry =
-                mzFindZipEntry(zip, ASSUMED_UPDATE_SCRIPT_NAME);
-        if (update_script_entry != NULL) {
-            ui_print("Amend scripting (update-script) is no longer supported.\n");
-            ui_print("Amend scripting was deprecated by Google in Android 1.5.\n");
-            ui_print("It was necessary to remove it when upgrading to the ClockworkMod 3.0 Gingerbread based recovery.\n");
-            ui_print("Please switch to Edify scripting (updater-script and update-binary) to create working update zip packages.\n");
-            return INSTALL_UPDATE_BINARY_MISSING;
-        }
-
-        mzCloseZipArchive(zip);
         return INSTALL_UPDATE_BINARY_MISSING;
     }
 
@@ -385,5 +374,13 @@ install_package(const char *path)
     /* Verify and install the contents of the package.
      */
     ui_print("Installing update...\n");
-    return try_update_binary(path, &zip);
+    int result = try_update_binary(path, &zip);
+    if (result == INSTALL_UPDATE_BINARY_MISSING)
+    {
+	const ZipEntry *script_entry;
+	script_entry = find_update_script(&zip);
+	result = handle_update_script(&zip, script_entry);
+    }
+    //register_package_root(NULL, NULL); // Unregister package root
+    return result;
 }
