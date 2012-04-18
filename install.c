@@ -255,6 +255,7 @@ try_update_binary(const char *path, ZipArchive *zip) {
         mzCloseZipArchive(zip);
         return ret;
     }
+    remove("/cache/update.zip");
     return INSTALL_SUCCESS;
 }
 

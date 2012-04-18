@@ -776,17 +776,18 @@ prompt_and_wait() {
                     ui_print("\n-- Wiping cache...\n");
                     erase_volume("/cache");
                     ui_print("Cache wipe complete.\n");
-                    ui_print("Preparing to wipe dalvik-cache...\n");
+                    ui_print("Perparing to wipe dalvik-cache...\n");
+                    if (!ui_text_visible()) return;
                 if (0 != ensure_path_mounted("/data"))
                     break;
-                    ensure_path_mounted("/sd-ext");
-                    ensure_path_mounted("/cache");
+                ensure_path_mounted("/sd-ext");
+                ensure_path_mounted("/cache");
                     ui_print("-- Wiping dalvik-cache...\n");
                     __system("rm -r /data/dalvik-cache");
                     __system("rm -r /cache/dalvik-cache");
                     __system("rm -r /sd-ext/dalvik-cache");
                     ui_print("Dalvik Cache wiped.\n");
-                    ensure_path_unmounted("/data");
+                ensure_path_unmounted("/data");
                 }
                 break;
 
@@ -990,25 +991,14 @@ main(int argc, char **argv) {
             }
         }
     } else if (update_package != NULL) {
-        ui_set_show_text(1);
-        ui_print("\n\nPreparing to install update\n\n");
-        ui_print("----------\n");
-        ui_print("Note- First reboot after install\ncan take a long time. Please\nwait five minutes from now\nbefore using this device\n");
-        ui_print("----------\n\n");
-        ui_print("Cache and dalvik wiped...\n\n");
-        ui_set_background(BACKGROUND_ICON_CLOCKWORK);
         status = install_package(update_package);
         if (status != INSTALL_SUCCESS) ui_print("Installation aborted.\n");
-        ui_set_show_text(0);
     } else if (wipe_data) {
         if (device_wipe_data()) status = INSTALL_ERROR;
         if (erase_volume("/data")) status = INSTALL_ERROR;
         if (wipe_cache && erase_volume("/cache")) status = INSTALL_ERROR;
         if (status != INSTALL_SUCCESS) ui_print("Data wipe failed.\n");
     } else if (wipe_cache) {
-        __system("rm -r /data/dalvik-cache");
-        __system("rm -r /cache/dalvik-cache");
-        __system("rm -r /sd-ext/dalvik-cache");
         if (wipe_cache && erase_volume("/cache")) status = INSTALL_ERROR;
         if (status != INSTALL_SUCCESS) ui_print("Cache wipe failed.\n");
     } else {
